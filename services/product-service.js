@@ -1,12 +1,34 @@
-const Product = require("../models/product");
+const Produto = require("../models/product");
 
 class ProductService {
     async getAllProducts() {
-        return await Product.find({});
+
+        const products = await Produto.find({});
+
+        if (!products.length) {
+            return {
+                success: false,
+                message: 'Não existem produtos cadastrados'
+            };
+        }
+
+        return {
+            success: true,
+            produtos: products
+        };
     }
 
-    async addProduct(product) {
-        const existProd = await Product.exists(product);
+    async addProduct(nome, descricao, categoria) {
+        const prod = {
+            nome,
+            descricao,
+            categoria,
+            avaliacoes: [],
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        const existProd = await Produto.exists({nome: prod.nome});
 
         if (existProd) {
             return {
@@ -15,7 +37,7 @@ class ProductService {
             }
         }
 
-        const prodCreated = await Product.create(product);
+        const prodCreated = await Produto.create(prod);
 
         return {
             success: true,

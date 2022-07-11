@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-const ShopRoute = require('./routes/product');
+const ProdutoRoute = require('./routes/product');
 
 class App {
     constructor() {
@@ -26,7 +26,7 @@ class App {
     }
 
     routes() {
-        this.express.use('/product', ShopRoute);
+        this.express.use('/produto', ProdutoRoute);
     }
 }
 

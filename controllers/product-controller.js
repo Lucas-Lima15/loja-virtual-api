@@ -1,34 +1,33 @@
-const Product = require("../models/product");
-const ProductService = require("../services/product-service");
+const ProdutoService = require("../services/product-service");
 
-class ShopController {
-    async index(req, res) {
-        const products = await ProductService.getAllProducts();
+class ProdutoController {
+    async getProdutos(req, res) {
+        const response = await ProdutoService.getAllProducts();
 
-        res.json(
-            {
-                produtos: ProductService.getProductsNome(products)
-            }
-        );
+        if (!response.success) {
+            res.statusCode = 404
+        }
+
+        res.json(response)
     }
 
-    async addProduct(req, res) {
-        const { nome } = req.body;
+    async addProduto(req, res) {
+        const { nome, descricao, categoria } = req.body;
 
-        const product = await ProductService.addProduct({nome});
+        const product = await ProdutoService.addProduct(nome, descricao, categoria);
 
         res.json(product);
     }
 
-    async deleteProduct(req, res) {
+    async deletProduto(req, res) {
         const { nome } = req.body;
 
-        const product = await ProductService.deleteProduct({nome});
+        const product = await ProdutoService.deleteProduct({ nome });
 
         if (!product) {
             res.statusCode = 400;
             res.json({
-                
+
             })
         }
 
@@ -36,4 +35,4 @@ class ShopController {
     }
 }
 
-module.exports = new ShopController();
+module.exports = new ProdutoController();
