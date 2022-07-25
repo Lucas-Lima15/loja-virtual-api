@@ -1,17 +1,16 @@
 const mongoose = require("mongoose");
 const Product = require("../../models/product");
 const ProductService = require("../../services/product-service");
+const MongoDB = require("../../util/mongoDb");
 const productMock = require('../mock/product');
 
 describe('ProductService', () => {
     beforeAll(() => {
-        mongoose.connect("mongodb://localhost:27017/loja-virtual-test");
-        const db = mongoose.connection;
-        db.on("error", console.error.bind(console, "connection error: "));
+        MongoDB.connect(true);
     });
 
     afterAll(() => {
-        mongoose.connection.close();
+        MongoDB.closeConnection();
     });
 
     beforeEach(async () => {

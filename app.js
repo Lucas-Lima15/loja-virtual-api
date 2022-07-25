@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const ProdutoRoute = require('./routes/product');
+const MongoDB = require('./util/mongoDb');
 
 class App {
     constructor() {
@@ -18,7 +19,7 @@ class App {
     }
 
     database() {
-        mongoose.connect('mongodb://localhost:27017/loja-virtual');
+        MongoDB.connect();
     }
 
     middlewares() {
