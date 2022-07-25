@@ -16,7 +16,7 @@ const ProdutoSchema = new mongoose.Schema({
     avaliacoes: [
         {
             userId: mongoose.Schema.Types.ObjectId,
-            menssagem: String,
+            mensagem: String,
             estrela: Number
         }
     ],
@@ -26,8 +26,14 @@ const ProdutoSchema = new mongoose.Schema({
     },
     updatedAt: {
         type: Date,
-        required: true
+        default: null
     }
 });
 
-module.exports = mongoose.model('Produto', ProdutoSchema, 'produtos');
+const Product = mongoose.model('Produto', ProdutoSchema, 'produtos');
+
+Product.findByName = nome => {
+    return Product.findOne({ nome: nome });
+};
+
+module.exports = Product;

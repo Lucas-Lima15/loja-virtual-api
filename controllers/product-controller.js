@@ -1,38 +1,99 @@
-const ProdutoService = require("../services/product-service");
+const ProductService = require("../services/product-service");
 
-class ProdutoController {
-    async getProdutos(req, res) {
-        const response = await ProdutoService.getAllProducts();
+class ProductController {
+    static async getProducts(req, res) {
+        const products = await ProductService.getAllProducts();
 
-        if (!response.success) {
+        if (!products) {
             res.statusCode = 404
+            return res.json({
+                success: false,
+                message: 'Não há produtos cadastrados'
+            });
         }
 
-        res.json(response)
+        res.json({
+            success: true,
+            products
+        })
     }
 
-    async addProduto(req, res) {
+    static async addProduct(req, res) {
         const { nome, descricao, categoria } = req.body;
 
-        const product = await ProdutoService.addProduct(nome, descricao, categoria);
+        const product = await ProductService.addProduct(nome, descricao, categoria);
 
-        res.json(product);
+        if (!product) {
+            res.statusCode = 400,
+                res.json({
+                    success: false,
+                    message: `Produto ${nome} já existe na base de dados`
+                })
+        }
+
+        res.json({
+            success: true,
+            product
+        });
     }
 
-    async deletProduto(req, res) {
-        const { nome } = req.body;
+    static async getProduct(req, res) {
+        const { id } = req.params;
 
-        const product = await ProdutoService.deleteProduct({ nome });
+        const product = await ProductService.findProductById(id);
+
+        if (!product) {
+            res.statusCode = 404;
+            return res.json({
+                success: false,
+                message: `Produto não existe na base de dados.`
+            });
+        }
+
+        return res.json({
+            success: true,
+            product
+        });
+    }
+
+    static async updateProduct(req, res) {
+        const { id } = req.params;
+        const { nome, descricao, categoria } = req.body;
+
+        const product = await ProductService.updateProduct({ id, nome, descricao, categoria });
+
+        if (!product) {
+            res.statusCode = 400
+            res.json({
+                success: false,
+                message: 'Ocorreu um erro'
+            });
+        }
+
+        res.json({
+            success: true,
+            product
+        });
+    }
+
+    static async deleteProduct(req, res) {
+        const { id } = req.params;
+
+        const product = await ProductService.deleteProduct(id);
 
         if (!product) {
             res.statusCode = 400;
             res.json({
-
-            })
+                succes: false,
+                message: 'Falha ao deletar'
+            });
         }
 
-        res.json(product);
+        res.json({
+            success: true,
+            product
+        });
     }
 }
 
-module.exports = new ProdutoController();
+module.exports = ProductController;
