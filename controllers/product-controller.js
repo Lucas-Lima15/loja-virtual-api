@@ -7,7 +7,7 @@ router.get('/produto', async (req, res) => {
     const products = await ProductService.getAllProducts();
 
     if (!products) {
-        return res.statusCode(404).json({
+        return res.status(404).json({
             success: false,
             message: 'Não há produtos cadastrados'
         });
@@ -25,7 +25,7 @@ router.post('/produto', async (req, res) => {
     const product = await ProductService.addProduct(nome, descricao, categoria);
 
     if (!product) {
-        res.statusCode(400).json({
+        res.status(400).json({
             success: false,
             message: `Produto ${nome} já existe na base de dados`
         })
@@ -43,7 +43,7 @@ router.get('/produto/:id', async (req, res) => {
     const product = await ProductService.findProductById(id);
 
     if (!product) {
-        return res.statusCode(404).json({
+        return res.status(404).json({
             success: false,
             message: `Produto não existe na base de dados.`
         });
@@ -62,7 +62,7 @@ router.put('/produto/:id', async (req, res) => {
     const product = await ProductService.updateProduct({ id, nome, descricao, categoria });
 
     if (!product) {
-        res.statusCode(400).json({
+        res.status(400).json({
             success: false,
             message: 'Ocorreu um erro'
         });
@@ -80,7 +80,7 @@ router.delete('/produto/:id', async (req, res) => {
         const product = await ProductService.deleteProduct(id);
 
         if (!product) {
-            res.statusCode(404).json({
+            res.status(404).json({
                 succes: false,
                 message: 'Produto não existe'
             });
