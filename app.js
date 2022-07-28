@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const ProdutoRoute = require('./routes/product');
+const ProductController = require('./controllers/product-controller');
 const MongoDB = require('./util/mongoDb');
 
 class App {
@@ -26,7 +26,7 @@ class App {
     }
 
     routes() {
-        this.express.use('/produto', ProdutoRoute);
+        this.express.use('/', ProductController);
     }
 }
 

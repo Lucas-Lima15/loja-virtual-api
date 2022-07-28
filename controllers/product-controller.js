@@ -1,91 +1,88 @@
-const ProductService = require("../services/product-service");
+const express = require('express');
+const ProductService = require('../services/product-service');
 
-class ProductController {
-    static async getProducts(req, res) {
-        const products = await ProductService.getAllProducts();
+const router = express.Router()
 
-        if (!products) {
-            res.statusCode = 404
-            return res.json({
-                success: false,
-                message: 'Não há produtos cadastrados'
-            });
-        }
+router.get('/produto', async (req, res) => {
+    const products = await ProductService.getAllProducts();
 
-        res.json({
-            success: true,
-            products
+    if (!products) {
+        return res.statusCode(404).json({
+            success: false,
+            message: 'Não há produtos cadastrados'
+        });
+    }
+
+    res.json({
+        success: true,
+        products
+    });
+});
+
+router.post('/produto', async (req, res) => {
+    const { nome, descricao, categoria } = req.body;
+
+    const product = await ProductService.addProduct(nome, descricao, categoria);
+
+    if (!product) {
+        res.statusCode(400).json({
+            success: false,
+            message: `Produto ${nome} já existe na base de dados`
         })
     }
 
-    static async addProduct(req, res) {
-        const { nome, descricao, categoria } = req.body;
+    res.json({
+        success: true,
+        product
+    });
+});
 
-        const product = await ProductService.addProduct(nome, descricao, categoria);
+router.get('/produto/:id', async (req, res) => {
+    const { id } = req.params;
 
-        if (!product) {
-            res.statusCode = 400,
-                res.json({
-                    success: false,
-                    message: `Produto ${nome} já existe na base de dados`
-                })
-        }
+    const product = await ProductService.findProductById(id);
 
-        res.json({
-            success: true,
-            product
+    if (!product) {
+        return res.statusCode(404).json({
+            success: false,
+            message: `Produto não existe na base de dados.`
         });
     }
 
-    static async getProduct(req, res) {
-        const { id } = req.params;
+    return res.json({
+        success: true,
+        product
+    });
+});
 
-        const product = await ProductService.findProductById(id);
+router.put('/produto/:id', async (req, res) => {
+    const { id } = req.params;
+    const { nome, descricao, categoria } = req.body;
 
-        if (!product) {
-            res.statusCode = 404;
-            return res.json({
-                success: false,
-                message: `Produto não existe na base de dados.`
-            });
-        }
+    const product = await ProductService.updateProduct({ id, nome, descricao, categoria });
 
-        return res.json({
-            success: true,
-            product
+    if (!product) {
+        res.statusCode(400).json({
+            success: false,
+            message: 'Ocorreu um erro'
         });
     }
 
-    static async updateProduct(req, res) {
-        const { id } = req.params;
-        const { nome, descricao, categoria } = req.body;
+    res.json({
+        success: true,
+        product
+    });
+});
 
-        const product = await ProductService.updateProduct({ id, nome, descricao, categoria });
-
-        if (!product) {
-            res.statusCode = 400
-            res.json({
-                success: false,
-                message: 'Ocorreu um erro'
-            });
-        }
-
-        res.json({
-            success: true,
-            product
-        });
-    }
-
-    static async deleteProduct(req, res) {
-        const { id } = req.params;
+router.delete('/produto/:id', async (req, res) => {
+    const { id } = req.params;
 
         const product = await ProductService.deleteProduct(id);
 
         if (!product) {
-            res.statusCode = 400;
-            res.json({
+            res.statusCode(404).json({
                 succes: false,
-                message: 'Falha ao deletar'
+                message: 'Produto não existe'
             });
         }
 
@@ -93,7 +90,6 @@ class ProductController {
             success: true,
             product
         });
-    }
-}
+});
 
-module.exports = ProductController;
+module.exports = router;
