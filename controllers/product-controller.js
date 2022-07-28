@@ -9,7 +9,7 @@ router.get('/produto', async (req, res) => {
     if (!products) {
         return res.status(404).json({
             success: false,
-            message: 'Não há produtos cadastrados'
+            message: 'Não há produtos cadastrados.'
         });
     }
 
@@ -25,9 +25,9 @@ router.post('/produto', async (req, res) => {
     const product = await ProductService.addProduct(nome, descricao, categoria);
 
     if (!product) {
-        res.status(400).json({
+        return res.status(400).json({
             success: false,
-            message: `Produto ${nome} já existe na base de dados`
+            message: `Produto ${nome} já existe na base de dados.`
         })
     }
 
@@ -62,13 +62,13 @@ router.put('/produto/:id', async (req, res) => {
     const product = await ProductService.updateProduct({ id, nome, descricao, categoria });
 
     if (!product) {
-        res.status(400).json({
+        return res.status(404).json({
             success: false,
-            message: 'Ocorreu um erro'
+            message: 'Produto não existe na base de dados.'
         });
     }
 
-    res.json({
+    return res.json({
         success: true,
         product
     });
@@ -77,19 +77,19 @@ router.put('/produto/:id', async (req, res) => {
 router.delete('/produto/:id', async (req, res) => {
     const { id } = req.params;
 
-        const product = await ProductService.deleteProduct(id);
+    const product = await ProductService.deleteProduct({ id });
 
-        if (!product) {
-            res.status(404).json({
-                succes: false,
-                message: 'Produto não existe'
-            });
-        }
-
-        res.json({
-            success: true,
-            product
+    if (!product) {
+        return res.status(404).json({
+            succes: false,
+            message: 'Produto não existe na base de dados.'
         });
+    }
+
+    return res.json({
+        success: true,
+        product
+    });
 });
 
 module.exports = router;

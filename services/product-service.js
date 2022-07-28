@@ -45,7 +45,7 @@ class ProductService {
     }
 
     static async updateProduct(prod) {
-        const product = await ProductService.findProductById(prod._id);
+        const product = await ProductService.findProductById(prod.id);
         
         if (!product) {
             return null;
@@ -62,7 +62,7 @@ class ProductService {
     }
 
     static async deleteProduct(prod) {
-        const product = await ProductService.findProductById(prod._id);
+        const product = await ProductService.findProductById(prod.id);
 
         if (!product) {
             return null
