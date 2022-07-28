@@ -5,12 +5,19 @@ const MongoDB = require("../../util/mongoDb");
 const productMock = require('../mock/product');
 
 describe('ProductService', () => {
-    beforeAll(() => {
-        MongoDB.connect(true);
+
+    beforeAll(async () => {
+        // await mongoose.connect('mongodb://localhost:27017/loja-virtual-test', {
+        //     useNewUrlParser: true,
+        //     useUnifiedTopology: true,
+        // })
+        await MongoDB.connectTest();
     });
 
-    afterAll(() => {
-        MongoDB.closeConnection();
+    afterAll(async () => {
+        // await mongoose.connection.db.dropDatabase();
+        // await mongoose.disconnect();
+        await MongoDB.closeConnectionDropDatabase();
     });
 
     beforeEach(async () => {
@@ -19,11 +26,11 @@ describe('ProductService', () => {
 
     describe('getAllProducts', () => {
         it('should return products if product exist', async () => {
-    
+
             await Product.create(productMock);
-    
+
             const products = await ProductService.getAllProducts();
-    
+
             expect(products).toBeTruthy();
         });
 
