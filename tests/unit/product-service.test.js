@@ -7,16 +7,10 @@ const productMock = require('../mock/product');
 describe('ProductService', () => {
 
     beforeAll(async () => {
-        // await mongoose.connect('mongodb://localhost:27017/loja-virtual-test', {
-        //     useNewUrlParser: true,
-        //     useUnifiedTopology: true,
-        // })
         await MongoDB.connectTest();
     });
 
     afterAll(async () => {
-        // await mongoose.connection.db.dropDatabase();
-        // await mongoose.disconnect();
         await MongoDB.closeConnectionDropDatabase();
     });
 
