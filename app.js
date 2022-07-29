@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const ProductController = require('./controllers/product-controller');
-const MongoDB = require('./util/mongoDb');
+const ProductController = require('./src/controllers/product-controller');
+const MongoDB = require('./src/util/mongoDb');
 
 class App {
     constructor() {

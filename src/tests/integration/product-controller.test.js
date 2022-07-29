@@ -1,6 +1,6 @@
 const request = require('supertest');
 const MongoDB = require('../../util/mongoDb.js');
-const App = require('../../app.js');
+const App = require('../../../app');
 const Product = require('../../models/product');
 const productMock = require('../mock/product');
 
