@@ -1,39 +1,95 @@
-const Product = require("../models/product");
-const ProductService = require("../services/product-service");
+const express = require('express');
+const ProductService = require('../services/product-service');
 
-class ShopController {
-    async index(req, res) {
-        const products = await ProductService.getAllProducts();
+const router = express.Router()
 
-        res.json(
-            {
-                produtos: ProductService.getProductsNome(products)
-            }
-        );
+router.get('/produto', async (req, res) => {
+    const products = await ProductService.getAllProducts();
+
+    if (!products) {
+        return res.status(404).json({
+            success: false,
+            message: 'Não há produtos cadastrados.'
+        });
     }
 
-    async addProduct(req, res) {
-        const { nome } = req.body;
+    res.json({
+        success: true,
+        products
+    });
+});
 
-        const product = await ProductService.addProduct({nome});
+router.post('/produto', async (req, res) => {
+    const { nome, descricao, categoria } = req.body;
 
-        res.json(product);
+    const product = await ProductService.addProduct(nome, descricao, categoria);
+
+    if (!product) {
+        return res.status(400).json({
+            success: false,
+            message: `Produto ${nome} já existe na base de dados.`
+        })
     }
 
-    async deleteProduct(req, res) {
-        const { nome } = req.body;
+    res.json({
+        success: true,
+        product
+    });
+});
 
-        const product = await ProductService.deleteProduct({nome});
+router.get('/produto/:id', async (req, res) => {
+    const { id } = req.params;
 
-        if (!product) {
-            res.statusCode = 400;
-            res.json({
-                
-            })
-        }
+    const product = await ProductService.findProductById(id);
 
-        res.json(product);
+    if (!product) {
+        return res.status(404).json({
+            success: false,
+            message: `Produto não existe na base de dados.`
+        });
     }
-}
 
-module.exports = new ShopController();
+    return res.json({
+        success: true,
+        product
+    });
+});
+
+router.put('/produto/:id', async (req, res) => {
+    const { id } = req.params;
+    const { nome, descricao, categoria } = req.body;
+
+    const product = await ProductService.updateProduct({ id, nome, descricao, categoria });
+
+    if (!product) {
+        return res.status(404).json({
+            success: false,
+            message: 'Produto não existe na base de dados.'
+        });
+    }
+
+    return res.json({
+        success: true,
+        product
+    });
+});
+
+router.delete('/produto/:id', async (req, res) => {
+    const { id } = req.params;
+
+    const product = await ProductService.deleteProduct({ id });
+
+    if (!product) {
+        return res.status(404).json({
+            succes: false,
+            message: 'Produto não existe na base de dados.'
+        });
+    }
+
+    return res.json({
+        success: true,
+        product
+    });
+});
+
+module.exports = router;

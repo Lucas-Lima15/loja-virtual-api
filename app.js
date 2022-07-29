@@ -1,24 +1,24 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-const ShopRoute = require('./routes/product');
+const ProductController = require('./controllers/product-controller');
+const MongoDB = require('./util/mongoDb');
 
 class App {
     constructor() {
         this.express = express();
-        
-        this.database();
         this.middlewares();
         this.routes();
+    }
 
+    listen() {
         this.express.listen(8080, () => {
             console.log(`Servidor rodando na porta 8080 as ${new Date()}`);
         })
     }
 
     database() {
-        mongoose.connect('mongodb://localhost:27017/loja-virtual');
+        MongoDB.connect()
     }
 
     middlewares() {
@@ -26,8 +26,8 @@ class App {
     }
 
     routes() {
-        this.express.use('/product', ShopRoute);
+        this.express.use('/', ProductController);
     }
 }
 
-module.exports = new App().express;
+module.exports = App;
