@@ -1,44 +1,77 @@
 const Product = require("../models/product");
 
 class ProductService {
-    async getAllProducts() {
-        return await Product.find({});
-    }
+    static async getAllProducts() {
+        const products = await Product.find({});
 
-    async addProduct(product) {
-        const existProd = await Product.exists(product);
-
-        if (existProd) {
-            return {
-                success: false,
-                message: 'Produto já existe'
-            }
+        if (!products.length) {
+            return null;
         }
 
-        const prodCreated = await Product.create(product);
-
-        return {
-            success: true,
-            message: 'Produto criado com sucesso',
-            produto: prodCreated
-        };
+        return products;
     }
 
-    async deleteProduct(product) {
-        const existProd = await Product.findOne(product);
+    static async findProductById(id) {
+        const product = await Product.findById(id);
 
-        if (!existProd) {
+        return product;
+    }
+
+    static async findProductByName(nome) {
+        const product = await Product.findByName(nome);
+
+        return product;
+    }
+
+    static async addProduct(nome, descricao, categoria) {
+        const existProd = await ProductService.findProductByName(nome);
+        
+        if (existProd) {
+            return null;
+        }
+        
+        const prod = {
+            nome,
+            descricao,
+            categoria,
+            avaliacoes: [],
+            createdAt: new Date(),
+            updatedAt: null
+        };
+
+        const prodCreated = await Product.create(prod);
+
+        return prodCreated;
+    }
+
+    static async updateProduct(prod) {
+        const product = await ProductService.findProductById(prod.id);
+        
+        if (!product) {
+            return null;
+        }
+
+        product.nome = prod.nome;
+        product.descricao = prod.descricao;
+        product.categoria = prod.categoria;
+        product.updatedAt = new Date();
+
+        await product.save();
+
+        return product;
+    }
+
+    static async deleteProduct(prod) {
+        const product = await ProductService.findProductById(prod.id);
+
+        if (!product) {
             return null
         }
 
-        const prodDeleted = await Product.deleteOne(product);
+        await Product.deleteOne(product);
 
-        return prodDeleted;
-    }
-
-    getProductsNome(products) {
-        return products.map(product => product.nome);
+        return product;
     }
 }
 
-module.exports = new ProductService()
+module.exports = ProductService;
